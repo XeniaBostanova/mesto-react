@@ -1,10 +1,9 @@
-import '../index.css';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
-import React from 'react';
+import React, { useState, useEffect} from 'react';
 import { api } from '../utils/api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
@@ -12,14 +11,14 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 
 function App() {
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState({name: '', link: ''});
-  const [currentUser, setCurrentUser] = React.useState('');
-  const [cards, setCards] = React.useState([]);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState({name: '', link: ''});
+  const [currentUser, setCurrentUser] = useState('');
+  const [cards, setCards] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     Promise.all([api.getProfile(), api.getInitialCards()])
       .then(([userData, cardData]) => {
         setCurrentUser(userData);
@@ -32,19 +31,10 @@ function App() {
     // Снова проверяем, есть ли уже лайк на этой карточке
     const isLiked = card.likes.some(i => i._id === currentUser._id);
 
-    if(!isLiked) {
-      api.addLike(card._id)
-        .then((newCard) => {
-          setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-        })
-        .catch((err) => console.log(err))
-    } else {
-      api.deleteLike(card._id)
-        .then((newCard) => {
-          setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-        })
-        .catch((err) => console.log(err))
-      }
+    api.changeLikeCardStatus(card._id, !isLiked)
+      .then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+    });
   }
 
   function handleCardDelete(card) {
@@ -109,7 +99,15 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <Header />
-        <Main onEditAvatar={handleEditAvatarClick} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} openImage={handleCardClick} cards={cards} onCardLike={handleCardLike} onCardDelete={handleCardDelete} />
+        <Main 
+          onEditAvatar={handleEditAvatarClick}
+          onEditProfile={handleEditProfileClick}
+          onAddPlace={handleAddPlaceClick}
+          openImage={handleCardClick}
+          cards={cards}
+          onCardLike={handleCardLike}
+          onCardDelete={handleCardDelete}
+        />
         <Footer />
       </div>
 

@@ -14,14 +14,14 @@ class Api {
     return fetch(`${this._baseUrl}/users/me`, {
       headers: this._headers,
     })
-      .then(res => this._getResponseData(res))
+      .then(this._getResponseData)
   }
 
   getInitialCards() {
     return fetch(`${this._baseUrl}/cards`, {
       headers: this._headers,
     })
-      .then(res => this._getResponseData(res))
+      .then(this._getResponseData)
   }
 
   editProfile(name, about) {
@@ -33,7 +33,7 @@ class Api {
         about
       })
     })
-      .then(res => this._getResponseData(res))
+      .then(this._getResponseData)
   }
 
   addCard(name, link) {
@@ -45,7 +45,7 @@ class Api {
         link
       })
     })
-      .then(res => this._getResponseData(res))
+      .then(this._getResponseData)
   }
 
   deleteCard(id) {
@@ -53,23 +53,16 @@ class Api {
       method: "DELETE",
       headers: this._headers,
     })
-      .then(res => this._getResponseData(res))
+      .then(this._getResponseData)
   }
 
-  deleteLike(id) {
-    return fetch(`${this._baseUrl}/cards/${id}/likes`, {
-      method: "DELETE",
-      headers: this._headers,
-    })
-      .then(res => this._getResponseData(res))
-  }
-
-  addLike(id) {
-    return fetch(`${this._baseUrl}/cards/${id}/likes`, {
-      method: "PUT",
-      headers: this._headers,
-    })
-      .then(res => this._getResponseData(res))
+  changeLikeCardStatus(id, isLiked) {
+    const methodName = (isLiked ? "PUT" : "DELETE");
+      return fetch(`${this._baseUrl}/cards/${id}/likes`, {
+        method: methodName,
+        headers: this._headers,
+      })
+        .then(this._getResponseData)
   }
 
   editAvatar(avatar) {
@@ -80,7 +73,7 @@ class Api {
         avatar
       })
     })
-      .then(res => this._getResponseData(res))
+      .then(this._getResponseData)
   }
 
 }
