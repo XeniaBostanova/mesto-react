@@ -10,4 +10,4 @@
 
 **Ссылка на проект**
 
-https://xeniabostanova.github.io/mesto
+https://xeniabostanova.github.io/mesto-react
